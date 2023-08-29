@@ -13,8 +13,8 @@ pip install -r requirements.txt
 
 cd RBPFootprintChallenge
 git clone https://github.com/OrensteinLab/RBPFootprintChallenge.git
-tar zxvf ./Data/Data.gz
-tar zxvf ./Data/gencode.v39.transcripts.fa.gz
+tar zxvf ./Data/Data.zip -C ./Data
+tar zxvf ./Data/gencode.v39.transcripts.fa.gz -C ./Data
 ```
 
 ## Scripts
