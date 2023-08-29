@@ -6,6 +6,8 @@ import tensorflow
 import time
 import pickle
 
+pd.options.mode.chained_assignment = None
+
 def one_hot_encode_DNA(seq):
     mapping = dict(zip("ACGT", range(4)))
     seq2 = [mapping[i] for i in seq]
@@ -35,7 +37,7 @@ for transcript_no in range(len(df_Transcripts)):
     transcript0_series = transcript0.stack()
     transcript0_str  = transcript0_series.str.cat()
     df_Transcripts['Sequence'][transcript_no] = transcript0_str
-    if transcript_no % 2000 == 0 and transcript_no!=0:
+    if transcript_no % 5000 == 0 and transcript_no!=0:
         end = time.time()
         print('Transcript No.:{}/{} [{:.2f}%]'.format(transcript_no,len(df_Transcripts),(transcript_no*100/len(df_Transcripts))))  
         ElapsedTime = end - start
@@ -51,7 +53,7 @@ with open('Data/transcripts','wb') as f:
     
 #Predict SHAPE for every transcript
 #Load Model
-Models/icSHAPE_InVivo_K562_PrismNetSHAPE_model = tensorflow.keras.models.load_model('Models/icSHAPE_InVivo_K562_PrismNet')
+SHAPE_model = tensorflow.keras.models.load_model('Models/icSHAPE_InVivo_K562_PrismNet')
 
 #Process transcripts
 Predicted_SHAPE = []
@@ -68,7 +70,7 @@ for n in range(len(df_Transcripts_filtered)):
     for i in range(len(transcript)):
         transcript_OHE_ext[i,:,:] = transcript_OHE[i:i+41,:]
     transcript_OHE_ext = transcript_OHE_ext.reshape((transcript_OHE_ext.shape[0],transcript_OHE_ext.shape[1]*transcript_OHE_ext.shape[2]))
-    Predicted_SHAPE.append(SHAPE_model.predict(transcript_OHE_ext, batch_size=5000))
+    Predicted_SHAPE.append(SHAPE_model.predict(transcript_OHE_ext, batch_size=5000, verbose = 0))
     
     #Calculate time remaining and dump predicted SHAPE every 10,000 processed transcripts
     if (n % 1000 == 0 or n==len(df_Transcripts_filtered)-1) and n!=0:
